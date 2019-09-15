@@ -15,10 +15,10 @@ module.exports = {
   // cacheDirectory: "/private/var/folders/nl/6z2mydq543s0pgtsbz4_b27r0000gp/T/jest_dy",
 
   // Automatically clear mock calls and instances between every test
-  // clearMocks: false,
+  clearMocks: true,
 
   // Indicates whether the coverage information should be collected while executing the test
-  // collectCoverage: false,
+  collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   // collectCoverageFrom: null,
@@ -100,7 +100,7 @@ module.exports = {
   // reporters: undefined,
 
   // Automatically reset mock state between every test
-  resetMocks: false,
+  resetMocks: true,
 
   // Reset the module registry before running each individual test
   // resetModules: false,
@@ -141,10 +141,9 @@ module.exports = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  // testMatch: [
-  //   "**/__tests__/**/*.[jt]s?(x)",
-  //   "**/?(*.)+(spec|test).[tj]s?(x)"
-  // ],
+  testMatch: [
+    "**/?(*.)+(spec|test).[jt]s?(x)"
+  ]
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
