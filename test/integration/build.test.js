@@ -35,9 +35,9 @@ expect.extend({
 expect.extend({
   toHaveSameContentsAsFile(file_name, source_file) {
     if (fs.existsSync(file_name)) {
-      const expected_contents = fs.readFileSync(source_file).toString()
-      const actual_contents = fs.readFileSync(file_name).toString()
-      if (expected_contents === actual_contents) {
+      const expected_contents = fs.readFileSync(source_file)
+      const actual_contents = fs.readFileSync(file_name)
+      if (expected_contents.compare(actual_contents) === 0) {
         return {
           message: () => `expected ${file_name} not to contain the same contents as ${source_file}`,
           pass: true
@@ -90,7 +90,7 @@ test("Building the site", () => {
       "styles.css": true
     },
     "js":  {
-      "file.js": true
+      "index.js": true
     },
     "about": {
       "bio.html": true,
