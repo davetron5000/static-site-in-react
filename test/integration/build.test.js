@@ -32,6 +32,33 @@ expect.extend({
   }
 })
 
+expect.extend({
+  toHaveSameContentsAsFile(file_name, source_file) {
+    if (fs.existsSync(file_name)) {
+      const expected_contents = fs.readFileSync(source_file).toString()
+      const actual_contents = fs.readFileSync(file_name).toString()
+      if (expected_contents === actual_contents) {
+        return {
+          message: () => `expected ${file_name} not to contain the same contents as ${source_file}`,
+          pass: true
+        }
+      }
+      else {
+        return {
+          message: () => `expected ${file_name} to contain the same contents as ${source_file} (${typeof expected_contents}):\n\n'${expected_contents}'\n\nbut it contained (${typeof actual_contents}):\n\n'${actual_contents}'`,
+          pass: false
+        }
+      }
+    }
+    else {
+      return {
+        message: () => `expected ${file_name} exist`,
+        pass: false
+      }
+    }
+  }
+})
+
 test("Building the site", () => {
   /*
    * 1. Clean up previous site
@@ -78,7 +105,7 @@ test("Building the site", () => {
         const source_file = path.join(source, file_name)
         const destination_file = path.join(destination, file_name)
 
-        expect(destination_file).toExistAsFile()
+        expect(destination_file).toHaveSameContentsAsFile(source_file)
         // and more
       }
       else {
