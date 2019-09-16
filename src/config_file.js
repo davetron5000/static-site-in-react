@@ -10,7 +10,9 @@ const load_config = (env) => {
 
   Object.getOwnPropertyNames(property_derivers).forEach( (property) => {
     const deriver = property_derivers[property];
-    config[property] = deriver(parsed_config,config)
+    config[property] = log_and_return_value(
+      deriver(parsed_config,config),
+      `${property} derived as '%s'`)
   })
 
   return new Proxy(config, missing_property_handler)
@@ -50,29 +52,28 @@ const derive_config_filename = (config) => {
 const property_derivers = {
   root: (parsed_config_file, config) => {
     if (parsed_config_file.root) {
-      return log_and_return_value(
-        path.resolve(path.join(path.dirname(config.filename), parsed_config_file.root.value)),
-        `config.root resolved to '%s'`)
+      return path.resolve(path.join(path.dirname(config.filename), parsed_config_file.root.value))
     }
     else {
-      return log_and_return_value(
-        path.resolve(path.join(__dirname,"..")),
-        "config.root omitted, defaultng to '%s'")
+      return path.resolve(path.join(__dirname,".."))
     }
   },
   output_path: (_, config) => {
     const output_dir = log_and_return_value(
       `deploy_to_${config.env}`,
-      "$output_dir is '%s")
+      "output_dir is '%s")
 
-    return log_and_return_value(
-      path.join(config.root, output_dir),
-      "config.output_dir resolved to '%s'")
+    return path.join(config.root, output_dir)
+  },
+  webpack_input_path: (_, config) => {
+    const webpack_input_dir = log_and_return_value(
+      `webpack_input_${config.env}`,
+      "webpack_input_dir is '%s")
+
+    return path.join(config.root, webpack_input_dir)
   },
   input_path: (_, config) => {
-    return log_and_return_value(
-      path.join(config.root, "site"),
-      "config.input_dir resolved to '%s'")
+    return path.join(config.root, "site")
   }
 }
 
