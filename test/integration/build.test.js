@@ -74,6 +74,7 @@ test("Building the site", () => {
     env: env
   }
   exec_and_log("rm -rf deploy_to_test", exec_options)
+  exec_and_log("rm -rf webpack_input_test", exec_options)
   exec_and_log("yarn build", exec_options)
 
   const site_output = path.join(test_root,"deploy_to_test")
@@ -86,12 +87,14 @@ test("Building the site", () => {
       "foo.jpg": true,
       "bar.png": true
     },
+    /*
     "css": {
       "styles.css": true
     },
     "js":  {
       "index.js": true
     },
+    */
     "about": {
       "bio.html": true,
       "site.html": true

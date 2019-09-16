@@ -1,3 +1,4 @@
 node_modules
 coverage
 test/root/deploy_to_test
+test/root/webpack_input_test

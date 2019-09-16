@@ -6,14 +6,16 @@ const chalk = require("chalk")
 const { log } = require("./log")
 const { load_config } = require("./config_file")
 
-config = load_config(process.env)
+const config = load_config(process.env)
 
-if (fs.existsSync(config.output_path)) {
-  log(`directory "${config.output_path}" already exists`)
-}
-else {
-  log(`creating directory '${config.output_path}'`)
-  fs.mkdirSync(config.output_path)
+const mkdir_p = (path) => {
+  if (fs.existsSync(path)) {
+    log(`directory "${path}" already exists`)
+  }
+  else {
+    log(`creating directory '${path}'`)
+    fs.mkdirSync(path)
+  }
 }
 
 copy_files = (from_dir, to_dir) => {
@@ -51,4 +53,5 @@ copy_files = (from_dir, to_dir) => {
   })
 }
 
-copy_files(config.input_path, config.output_path)
+mkdir_p(config.webpack_input_path)
+copy_files(config.input_path, config.webpack_input_path)
