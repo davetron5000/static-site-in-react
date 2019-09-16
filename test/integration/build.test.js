@@ -59,6 +59,66 @@ expect.extend({
   }
 })
 
+expect.extend({
+  toHaveWebpackInsertedContent(file_name) {
+    if (fs.existsSync(file_name)) {
+      const file_contents = fs.readFileSync(file_name)
+      if (file_contents.indexOf("styles.css") != -1) {
+        if (file_contents.indexOf("main.js") != -1) {
+          return {
+            message: () => `expected ${file_name} not to contain a reference to 'main.js' or 'styles.css', but it did.  contents:\n\n${file_contents}`,
+            pass: true
+          }
+        }
+        else {
+          return {
+            message: () => `expected ${file_name} to contain a reference to 'main.js', but it didn't.  contents:\n\n${file_contents}`,
+            pass: false
+          }
+        }
+      }
+      else {
+        return {
+          message: () => `expected ${file_name} to contain a reference to 'styles.css', but it didn't.  contents:\n\n${file_contents}`,
+          pass: false
+        }
+      }
+    }
+    else {
+      return {
+        message: () => `expected ${file_name} exist`,
+        pass: false
+      }
+    }
+  }
+})
+
+expect.extend({
+  toBeMoreThanAFewLinesLong(file_name) {
+    if (fs.existsSync(file_name)) {
+      const file_length = fs.readFileSync(file_name).toString().split(/\n/).length
+      if (file_length > 10) {
+        return {
+          message: () => `expected ${file_name} to have fewer than 10 lines, but had ${file_length}`,
+          pass: true
+        }
+      }
+      else {
+        return {
+          message: () => `expected ${file_name} to have more than 10 lines, but had ${file_length}`,
+          pass: false
+        }
+      }
+    }
+    else {
+      return {
+        message: () => `expected ${file_name} exist`,
+        pass: false
+      }
+    }
+  }
+})
+
 test("Building the site", () => {
   /*
    * 1. Clean up previous site
@@ -81,35 +141,60 @@ test("Building the site", () => {
   const site_input = path.join(test_root, "site")
 
   expect(site_output).toExistAsFile()
+  const check_for_webpack_inserted_content = (original_file, destination_file) => {
+    const destination_file_contents = fs.readFileSync(destination_file).toString()
+    if (destination_file_contents.indexOf("styles.css") != -1) {
+      if (destination_file_contents.indexOf("main.js") != -1) {
+        return true
+      }
+      else {
+        return false;
+      }
+    }
+    else {
+      return false;
+    }
+  }
+
   const files = {
-    "index.html": true,
+    "index.html": "toHaveWebpackInsertedContent",
     "images": {
-      "foo.jpg": true,
-      "bar.png": true
+      "foo.jpg": "identical",
+      "subdir": {
+        "bar.png": "identical"
+      }
     },
-    /*
-    "css": {
-      "styles.css": true
-    },
-    "js":  {
-      "index.js": true
-    },
-    */
+    "styles.css": "toBeMoreThanAFewLinesLong",
+    "main.js": "toBeMoreThanAFewLinesLong",
     "about": {
-      "bio.html": true,
-      "site.html": true
+      "bio.html": "toHaveWebpackInsertedContent",
+      "site.html": "toHaveWebpackInsertedContent"
     }
   }
 
   const assert_files = (source, destination, file_list) => {
     Object.entries(file_list).forEach( (pair) => {
-      if (pair[1] === true) {
+      const eval_strategy = pair[1];
+      if (eval_strategy == "identical") {
         const file_name = pair[0]
         const source_file = path.join(source, file_name)
         const destination_file = path.join(destination, file_name)
 
         expect(destination_file).toHaveSameContentsAsFile(source_file)
-        // and more
+      }
+      else if (eval_strategy == "exists") {
+        const file_name = pair[0]
+        const source_file = path.join(source, file_name)
+        const destination_file = path.join(destination, file_name)
+
+        expect(destination_file).toExistAsFile()
+      }
+      else if (typeof eval_strategy === "string") {
+        const file_name = pair[0]
+        const check_function = pair[1]
+        const destination_file = path.join(destination, file_name)
+
+        expect(destination_file)[check_function]()
       }
       else {
         const dir_name = pair[0]
