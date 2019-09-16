@@ -18,6 +18,9 @@ const log = (message) => {
     chalk.white.bold(message))
   console.log(annotated_message)
 }
+const log_error = (message) => {
+  log(chalk.red(`ERROR: ${message}`))
+}
 
 const log_and_return_value = (value, message_string) => {
   log(sprintf(message_string, chalk.greenBright(value)))
@@ -26,5 +29,6 @@ const log_and_return_value = (value, message_string) => {
 
 module.exports = {
   log: log,
+  log_error: log_error,
   log_and_return_value: log_and_return_value
 }
