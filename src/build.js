@@ -2,38 +2,52 @@ const child_process = require("child_process")
 const process = require("process")
 const path = require("path")
 const fs = require("fs")
+const { sprintf } = require("sprintf-js")
+const chalk = require("chalk")
 
 const log = (message) => {
-  const annotated_message = `[static-site-in-react](${path.basename(__filename)}): ${message}`
+  const annotated_message = sprintf("[%s](%s): %s",
+    chalk.blue.dim("static-site-in-react"),
+    chalk.yellow.dim(path.basename(__filename)),
+    chalk.white.bold(message))
   console.log(annotated_message)
 }
 
+const log_and_return_value = (value, message_string) => {
+  log(sprintf(message_string, chalk.greenBright(value)))
+  return value
+}
 
 const read_config = (env) => {
-  const env_name = env.BUILD_ENV || "dev"
+  const config = {}
 
-  log(`environment: ${env_name}`)
-  const config_filename = `site-config.${env_name}.json`
-  log(`config: ${config_filename}`)
-  const config_contents = fs.readFileSync(config_filename)
-  const config = JSON.parse(config_contents)
-  if (config.root) {
-    const root = path.resolve(path.join(path.dirname(config_filename), config.root))
-    log(`config.root specified as "${config.root}", resolved to "${root}"`)
-    config.root = root;
+  const env_name = log_and_return_value(env.BUILD_ENV || "dev", "envrionment: '%s'")
+  const config_filename = log_and_return_value(`site-config.${env_name}.json`,"config file: '%s'")
+
+  const config_json = fs.readFileSync(config_filename)
+  const parsed_config = JSON.parse(config_json)
+  if (parsed_config.root) {
+    config.root = log_and_return_value(
+      path.resolve(path.join(path.dirname(config_filename), parsed_config.root.value)),
+      `$root specified as '${parsed_config.root.value}', resolved to '%s'`)
   }
   else {
-    config.root = path.resolve(path.join(__dirname,".."))
-    log(`config.root not specified, using "${config.root}"`)
+    config.root = log_and_return_value(
+      path.resolve(path.join(__dirname,"..")),
+      "$root not specified, using '%s'")
   }
 
-  const output_dir = config.output_dir || `deploy_to_${env.BUILD_ENV || "dev"}`
-  config.output_path = path.join(config.root, output_dir)
+  const output_dir = log_and_return_value(
+    `deploy_to_${env.BUILD_ENV || "dev"}`,
+    "$output_dir is '%s")
 
-  log(`site output dir resolved to "${config.output_path}"`)
+  config.output_path = log_and_return_value(
+    path.join(config.root, output_dir),
+    "config.output_dir resolved to '%s'")
 
-  config.input_path = path.join(config.root, "site")
-  log(`site input dir resolved to "${config.input_path}"`)
+  config.input_path = log_and_return_value(
+    path.join(config.root, "site"),
+    "config.input_dir resolved to '%s'")
 
   return config
 }
@@ -44,12 +58,12 @@ if (fs.existsSync(config.output_path)) {
   log(`directory "${config.output_path}" already exists`)
 }
 else {
-  log(`creating directory "${config.output_path}"`)
+  log(`creating directory '${config.output_path}'`)
   fs.mkdirSync(config.output_path)
 }
 
 copy_files = (from_dir, to_dir) => {
-  log(`Copying files from ${from_dir} to ${to_dir}`)
+  log(chalk`Copying files from '{cyan ${from_dir}}' to '{yellow ${to_dir}}'`)
 
   const files = fs.readdirSync(from_dir)
 
@@ -60,13 +74,13 @@ copy_files = (from_dir, to_dir) => {
 
     if (is_directory) {
       const full_path_to_to_dir = path.join(to_dir, file)
-      log(`${file} (in ${from_dir}) is a directory`)
+      log(chalk`'{cyan ${file}}' (in '{cyan ${from_dir}}') is a directory`)
 
       if (fs.existsSync(full_path_to_to_dir)) {
-        log(`path "${full_path_to_to_dir}" already exists`)
+        log(chalk`path '{yellow ${full_path_to_to_dir}}' already exists`)
       }
       else {
-        log(`path "${full_path_to_to_dir}" does not exist. Creating it...`)
+        log(chalk`path '{yellow ${full_path_to_to_dir}}' does not exist. Creating it...`)
         fs.mkdirSync(full_path_to_to_dir)
       }
 
@@ -77,7 +91,7 @@ copy_files = (from_dir, to_dir) => {
     }
     else {
       const full_path_to_to_file = path.join(to_dir, file)
-      log(`${file} (in ${from_dir}) is a file`)
+      log(chalk`'{cyan ${file}}' (in '{cyan ${from_dir}}') is a file`)
       fs.copyFileSync(full_path_to_file, full_path_to_to_file)
     }
   })
