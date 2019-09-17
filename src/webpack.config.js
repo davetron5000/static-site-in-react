@@ -1,3 +1,8 @@
+require("@babel/register")({
+  presets: ["@babel/preset-react"],
+  plugins: ["transform-es2015-modules-commonjs"]
+});
+
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin    = require('copy-webpack-plugin')
 const HtmlPlugin           = require("html-webpack-plugin");
@@ -62,7 +67,8 @@ module.exports = function(_) {
         ignore: [
           "*.js",
           "*.css",
-          "*.html"
+          "*.html",
+          "components/*"
         ]
       }
     ],

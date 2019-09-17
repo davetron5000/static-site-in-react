@@ -1,6 +1,6 @@
-const path = require("path")
-const fs = require("fs")
-const { log, log_and_return_value } = require("./log")
+import path from "path"
+import fs from "fs"
+import { log, log_and_return_value } from "./log"
 
 const load_config = (env) => {
   const config = {}
@@ -18,8 +18,8 @@ const load_config = (env) => {
   return new Proxy(config, missing_property_handler)
 }
 
-module.exports = {
-  load_config: load_config
+export {
+  load_config
 }
 
 /****************************/

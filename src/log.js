@@ -1,6 +1,6 @@
-const { sprintf } = require("sprintf-js")
-const chalk = require("chalk")
-const path = require("path")
+import { sprintf } from "sprintf-js"
+import chalk from "chalk"
+import path from "path"
 
 const log = (message) => {
   let location = "unknown location"
@@ -27,8 +27,8 @@ const log_and_return_value = (value, message_string) => {
   return value
 }
 
-module.exports = {
-  log: log,
-  log_error: log_error,
-  log_and_return_value: log_and_return_value
+export {
+  log,
+  log_error,
+  log_and_return_value
 }

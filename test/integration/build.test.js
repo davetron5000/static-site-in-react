@@ -141,20 +141,7 @@ test("Building the site", () => {
   const site_input = path.join(test_root, "site")
 
   expect(site_output).toExistAsFile()
-  const check_for_webpack_inserted_content = (original_file, destination_file) => {
-    const destination_file_contents = fs.readFileSync(destination_file).toString()
-    if (destination_file_contents.indexOf("styles.css") != -1) {
-      if (destination_file_contents.indexOf("main.js") != -1) {
-        return true
-      }
-      else {
-        return false;
-      }
-    }
-    else {
-      return false;
-    }
-  }
+  expect(path.join(site_output,"components")).not.toExistAsFile()
 
   const files = {
     "index.html": "toHaveWebpackInsertedContent",

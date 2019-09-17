@@ -1,10 +1,16 @@
+require("@babel/register")({
+  presets: ["@babel/preset-react"],
+  plugins: ["transform-es2015-modules-commonjs"]
+});
+
 const child_process = require("child_process")
-const process = require("process")
-const path = require("path")
-const fs = require("fs")
-const chalk = require("chalk")
+const process       = require("process")
+const path          = require("path")
+const fs            = require("fs")
+const chalk         = require("chalk")
+
 const { log, log_error } = require("./log")
-const { load_config } = require("./config_file")
+const { load_config }    = require("./config_file")
 
 try {
   const config = load_config(process.env)
