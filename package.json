@@ -30,8 +30,13 @@
   },
   "scripts": {
     "test": "jest",
-    "build:production": "BUILD_ENV=production yarn build",
-    "serve:production": "BUILD_ENV=production yarn serve",
+
+    "production:build": "BUILD_ENV=production yarn build",
+    "production:serve": "BUILD_ENV=production yarn serve",
+
+    "dev:build:watch": "find root/site | entr yarn build:webpack_input",
+    "dev:webpack:watch": "webpack-dev-server --config=src/webpack.config.js --open",
+
     "serve": "node src/serve.js",
     "build": "yarn build:webpack_input && yarn build:webpack_output",
     "build:webpack_input": "node src/build.js",
