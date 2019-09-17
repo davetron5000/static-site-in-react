@@ -94,6 +94,40 @@ expect.extend({
 })
 
 expect.extend({
+  toHaveBeenRenderedByReact(file_name) {
+    if (fs.existsSync(file_name)) {
+      const file_contents = fs.readFileSync(file_name)
+      if (file_contents.indexOf("<!DOCTYPE html>") != -1) {
+        if (file_contents.indexOf("<html") != -1) {
+          return {
+            message: () => `expected ${file_name} not to contain <!DOCTYPE html> or <html, but it did.  contents:\n\n${file_contents}`,
+            pass: true
+          }
+        }
+        else {
+          return {
+            message: () => `expected ${file_name} to contain a <html, but it didn't.  contents:\n\n${file_contents}`,
+            pass: false
+          }
+        }
+      }
+      else {
+        return {
+          message: () => `expected ${file_name} to contain a <!DOCTYPE html>, but it didn't.  contents:\n\n${file_contents}`,
+          pass: false
+        }
+      }
+    }
+    else {
+      return {
+        message: () => `expected ${file_name} exist`,
+        pass: false
+      }
+    }
+  }
+})
+
+expect.extend({
   toBeMoreThanAFewLinesLong(file_name) {
     if (fs.existsSync(file_name)) {
       const file_length = fs.readFileSync(file_name).toString().split(/\n/).length
@@ -144,7 +178,7 @@ test("Building the site", () => {
   expect(path.join(site_output,"components")).not.toExistAsFile()
 
   const files = {
-    "index.html": "toHaveWebpackInsertedContent",
+    "index.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
     "images": {
       "foo.jpg": "identical",
       "subdir": {
@@ -154,7 +188,7 @@ test("Building the site", () => {
     "styles.css": "toBeMoreThanAFewLinesLong",
     "main.js": "toBeMoreThanAFewLinesLong",
     "about": {
-      "bio.html": "toHaveWebpackInsertedContent",
+      "bio.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
       "site.html": "toHaveWebpackInsertedContent"
     }
   }
@@ -182,6 +216,15 @@ test("Building the site", () => {
         const destination_file = path.join(destination, file_name)
 
         expect(destination_file)[check_function]()
+      }
+      else if (Array.isArray(eval_strategy)) {
+        const file_name = pair[0]
+        const destination_file = path.join(destination, file_name)
+
+        expect(eval_strategy.length > 0).toBe(true)
+        eval_strategy.forEach( (check_function) => {
+          expect(destination_file)[check_function]()
+        });
       }
       else {
         const dir_name = pair[0]

@@ -2,56 +2,26 @@ import fs from "fs"
 import path from "path"
 import chalk from "chalk"
 import { log, log_and_return_value } from "./log"
-
-class Result {
-  constructor(file_to_copy) {
-    this.source_path = file_to_copy.path_to_source_file
-    this.destination_path = file_to_copy.path_to_destination_file
-  }
-
-  source_is_directory(is_directory) {
-    this.is_directory = is_directory
-    this.is_file = !is_directory
-  }
-
-  source_is_file(is_file) {
-    this.is_directory = !is_file
-    this.is_file = is_file
-  }
-
-  set_action(action, reason) {
-    this.action = action
-    this.reason = reason
-  }
-
-  source_modified_at(mtimeMs) {
-    this.source_mtimeMs = mtimeMs
-  }
-
-  destination_modified_at(mtimeMs) {
-    this.destination_mtimeMs = mtimeMs
-  }
-
-  toString() {
-    return chalk`FileToCopy.Result [
-  from       : '{green ${this.source_path}}'
-    modified : {yellow ${this.source_mtimeMs}}
-  to         : '{green ${this.destination_path}}'
-${ this.destination_mtimeMs ? chalk`    modified : {yellow ${this.destination_mtimeMs}}` : "" }
-  type       : {green ${this.is_file ? 'file' : 'directory' }}
-  action     : {cyan ${this.action}}, reason '{yellow ${this.reason}}'
-]`
-  }
-}
+import ReactTemplateFile from "./ReactTemplateFile"
+import FileCopyResult from "./FileCopyResult"
 
 export default class FileToCopy {
+  static for_file(file_name, source_path, destination_path) {
+    if (file_name.match(/\.html\.jsx$/i)) {
+      return new ReactTemplateFile(file_name, source_path, destination_path)
+    }
+    else {
+      return new FileToCopy(file_name, source_path, destination_path)
+    }
+  }
+
   constructor(file_name, source_path, destination_path) {
     this.path_to_source_file = path.join(source_path, file_name)
     this.path_to_destination_file = path.join(destination_path, file_name)
   }
 
   ensure_destination() {
-    const result = new Result(this)
+    const result = new FileCopyResult(this)
 
     const source_stat = fs.lstatSync(this.path_to_source_file)
 
