@@ -12,7 +12,9 @@ const chalk         = require("chalk")
 const { log, log_error } = require("./log")
 const { load_config }    = require("./config_file")
 
-try {
+const FileToCopy = require("./FileToCopy").default
+
+const main = () => {
   const config = load_config(process.env)
 
   const mkdir_p = (path) => {
@@ -31,38 +33,38 @@ try {
     const files = fs.readdirSync(from_dir)
 
     files.forEach( (file) => {
+      const file_to_copy = new FileToCopy(file, from_dir, to_dir)
 
-      const full_path_to_file = path.join(from_dir, file)
-      const is_directory = fs.lstatSync(full_path_to_file).isDirectory()
+      const result = file_to_copy.ensure_destination()
 
-      if (is_directory) {
-        const full_path_to_to_dir = path.join(to_dir, file)
-        log(chalk`'{cyan ${file}}' (in '{cyan ${from_dir}}') is a directory`)
-
-        if (fs.existsSync(full_path_to_to_dir)) {
-          log(chalk`path '{yellow ${full_path_to_to_dir}}' already exists`)
-        }
-        else {
-          log(chalk`path '{yellow ${full_path_to_to_dir}}' does not exist. Creating it...`)
-          fs.mkdirSync(full_path_to_to_dir)
-        }
-
+      if (result.is_directory) {
         copy_files(
-          full_path_to_file,
-          full_path_to_to_dir
+          file_to_copy.path_to_source_file,
+          file_to_copy.path_to_destination_file
         )
-      }
-      else {
-        const full_path_to_to_file = path.join(to_dir, file)
-        log(chalk`'{cyan ${file}}' (in '{cyan ${from_dir}}') is a file`)
-        fs.copyFileSync(full_path_to_file, full_path_to_to_file)
       }
     })
   }
 
   mkdir_p(config.webpack_input_path)
   copy_files(config.input_path, config.webpack_input_path)
-} catch (error) {
-  log_error(error.message)
-  process.exit(1)
 }
+
+let runner = (main) => {
+  try {
+    main()
+  }
+  catch (error) {
+    log_error(error.message)
+    process.exit(1)
+  }
+}
+
+if ( (process.env.BUILD_ENV == "test") ||
+     (process.env.DEBUG == "true") ) {
+  runner = (main) => {
+    main()
+  }
+}
+
+runner(main)
