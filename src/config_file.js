@@ -74,6 +74,24 @@ const property_derivers = {
   },
   input_path: (_, config) => {
     return path.join(config.root, "site")
+  },
+  minify: (parsed_config_file, config) => {
+    if (parsed_config_file.minify) {
+      return !!parsed_config_file.minify.value
+    }
+    else {
+      log("'minify' omitted from config file. Defaulting to false")
+      return false
+    }
+  },
+  hash: (parsed_config_file, config) => {
+    if (parsed_config_file.hash) {
+      return !!parsed_config_file.hash.value
+    }
+    else {
+      log("'hash' omitted from config file. Defaulting to false")
+      return false
+    }
   }
 }
 

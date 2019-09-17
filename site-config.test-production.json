@@ -1,0 +1,14 @@
+{
+  "root": {
+    "description": "Path to the root of your project.  If you use a ./ this is interpretted as relative to where this file is located",
+    "value": "./test/root"
+  },
+  "minify": {
+    "description": "true or false if minifiable things should be minified",
+    "value": true
+  },
+  "hash": {
+    "description": "true or false if assets should be named with a hash for long-term CDN caching",
+    "value": true
+  }
+}

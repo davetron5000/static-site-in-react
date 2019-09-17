@@ -2,5 +2,7 @@ node_modules
 coverage
 test/root/deploy_to_test
 test/root/webpack_input_test
+test/root/deploy_to_test-production
+test/root/webpack_input_test-production
 test/root/deploy_to_dev
 test/root/webpack_input_dev
