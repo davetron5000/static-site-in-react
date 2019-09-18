@@ -7,6 +7,7 @@ import ReactDOMServer from "react-dom/server";
 
 import Logger         from "./Logger"
 import FileCopyResult from "./FileCopyResult"
+import RegularFile    from "./RegularFile"
 
 const md = new MarkdownIt({
   html: true,
@@ -16,17 +17,22 @@ const md = new MarkdownIt({
 });
 
 
-export default class MarkdownTemplateFile {
+export default class MarkdownTemplateFile extends RegularFile {
   constructor(file_name, source_path, destination_path) {
+    super(file_name, source_path, destination_path)
+
     if (!file_name.match(/\.html\.md$/i)) {
       throw `MarkdownTemplateFile cannot be used on ${file_name}, as it does not end in .html.md`
     }
-    this.path_to_source_file = path.join(source_path, file_name)
     this.path_to_destination_file = path.join(destination_path, file_name.replace(/\.md/i,""))
   }
 
+  is_html() { return true }
+
+  is_directory() { return false; }
+
   ensure_destination() {
-    const result = new FileCopyResult(this)
+    const result = new FileCopyResult("copy to webpack", this)
 
     const source_stat = fs.lstatSync(this.path_to_source_file)
 
@@ -39,6 +45,17 @@ export default class MarkdownTemplateFile {
 
     Logger.log(result.toString())
     return result
+  }
+
+  class_name() { return "MarkdownTemplateFile" }
+
+  metadata() {
+    const [ front_matter, _ ] = this._parse_file()
+
+    return {
+      relative_url: this.relative_url,
+      title: front_matter.title
+    }
   }
 
   _render_file() {

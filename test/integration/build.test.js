@@ -94,6 +94,48 @@ expect.extend({
 })
 
 expect.extend({
+  toHaveLinksToOtherFiles(file_name) {
+    if (fs.existsSync(file_name)) {
+      const file_contents = fs.readFileSync(file_name)
+      const expected_file_links = [
+        [ "/index.html", "Index" ],
+        [ "/foo.html", "My Awesome Page" ],
+        [ "/about/bio.html", "About Bio" ],
+        [ "/about/site.html", "About Site" ],
+      ];
+
+      for (let file_link of expected_file_links) {
+        const url = file_link[0],
+              title = file_link[1]
+
+        if (file_contents.indexOf(url) == -1) {
+          return {
+            message: () => `Expected ${file_name} to contain a link to ${url}. Contents:\n\n${file_contents}`,
+            pass: false
+          }
+        }
+        if (file_contents.indexOf(title) == -1) {
+          return {
+            message: () => `Expected ${file_name} to contain a with title ${title}. Contents:\n\n${file_contents}`,
+            pass: false
+          }
+        }
+      }
+      return {
+        message: () => `Expected ${file_name} not to have links to the various files. Contents:\n\n${file_contents}`,
+        pass: true
+      }
+    }
+    else {
+      return {
+        message: () => `expected ${file_name} exist`,
+        pass: false
+      }
+    }
+  }
+})
+
+expect.extend({
   toHaveHashedWebpackInsertedContent(file_name) {
     if (fs.existsSync(file_name)) {
       const file_contents = fs.readFileSync(file_name).toString()
@@ -310,7 +352,7 @@ test("Building the site", () => {
    * An object is assumed to map to a nested directory structure.
    */
   const files = {
-    "index.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
+    "index.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact", "toHaveLinksToOtherFiles" ],
     "foo.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
     "images": {
       "foo.jpg": "identical",
@@ -319,6 +361,8 @@ test("Building the site", () => {
       }
     },
     "components": "not-exists",
+    "data.json": "not-exists",
+    "derived_site_data.json": "not-exists",
     "styles.css": "toBeMoreThanAFewLinesLong",
     "bundle.js": "toBeMoreThanAFewLinesLong",
     "about": {
@@ -365,7 +409,7 @@ test("Building the site for prod", () => {
    * An object is assumed to map to a nested directory structure.
    */
   const files = {
-    "index.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
+    "index.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact", "toHaveLinksToOtherFiles" ],
     "foo.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
     "images": {
       "foo.jpg": "identical",
@@ -374,6 +418,8 @@ test("Building the site for prod", () => {
       }
     },
     "components": "not-exists",
+    "data.json": "not-exists",
+    "derived_site_data.json": "not-exists",
     "styles.css": "toHaveBeenMinifiedAndHashed",
     "bundle.js": "toHaveBeenMinifiedAndHashed",
     "about": {

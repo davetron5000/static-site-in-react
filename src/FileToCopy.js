@@ -5,6 +5,8 @@ import Logger from "./Logger"
 import ReactTemplateFile from "./ReactTemplateFile"
 import MarkdownTemplateFile from "./MarkdownTemplateFile"
 import FileCopyResult from "./FileCopyResult"
+import RegularFile from "./RegularFile"
+
 class NoOp {
   constructor(file_name, source_path, destination_path, reason) {
     this.file_name = file_name;
@@ -13,13 +15,21 @@ class NoOp {
     this.reason = reason
   }
   ensure_destination() { 
-    const result = new FileCopyResult(this)
+    const result = new FileCopyResult("copy to webpack", this)
 
     result.set_action("ignoring", this.reason)
     Logger.log(result.toString())
 
     return result
   }
+  is_html() { return false }
+  metadata() {
+    return {};
+  }
+  is_directory() {
+    return fs.lstatSync(this.path_to_source_file).isDirectory()
+  }
+  class_name() { return "NoOp" }
 }
 
 export default class FileToCopy {
@@ -34,51 +44,6 @@ export default class FileToCopy {
       return new NoOp(file_name, source_path, destination_path, 
         `${file_name} appears to be a tmp file`);
     }
-    return new FileToCopy(file_name, source_path, destination_path)
-  }
-
-  constructor(file_name, source_path, destination_path) {
-    this.path_to_source_file = path.join(source_path, file_name)
-    this.path_to_destination_file = path.join(destination_path, file_name)
-  }
-
-  ensure_destination() {
-    const result = new FileCopyResult(this)
-
-    const source_stat = fs.lstatSync(this.path_to_source_file)
-
-    result.source_modified_at(source_stat.mtimeMs)
-
-    if (source_stat.isDirectory()) {
-      result.source_is_directory(true)
-      if (fs.existsSync(this.path_to_destination_file)) {
-        result.set_action("none", "destination exists")
-      }
-      else {
-        result.set_action("created destination directory", "destination did not exist")
-        fs.mkdirSync(this.path_to_destination_file)
-      }
-    }
-    else {
-      result.source_is_file(true)
-      if (fs.existsSync(this.path_to_destination_file)) {
-        const dest_stat = fs.lstatSync(this.path_to_destination_file)
-        result.destination_modified_at(dest_stat.mtimeMs)
-
-        if (dest_stat.mtimeMs >= source_stat.mtimeMs) {
-          result.set_action("none", "destination fresher than source")
-        }
-        else {
-          result.set_action("copied file", "destination is stale")
-          fs.copyFileSync(this.path_to_source_file, this.path_to_destination_file)
-        }
-      }
-      else {
-        result.set_action("copied file", "destination doesn't exist")
-        fs.copyFileSync(this.path_to_source_file, this.path_to_destination_file)
-      }
-    }
-    Logger.log(result.toString())
-    return result
+    return new RegularFile(file_name, source_path, destination_path)
   }
 }

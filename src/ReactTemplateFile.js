@@ -5,18 +5,30 @@ import React          from "react";
 import ReactDOMServer from "react-dom/server";
 import Logger         from "./Logger"
 import FileCopyResult from "./FileCopyResult"
+import RegularFile    from "./RegularFile"
 
-export default class ReactTemplateFile {
+export default class ReactTemplateFile extends RegularFile {
   constructor(file_name, source_path, destination_path) {
+    super(file_name, source_path, destination_path)
     if (!file_name.match(/\.html\.jsx$/i)) {
       throw `ReactTemplateFile cannot be used on ${file_name}, as it does not end in .html.jsx`
     }
-    this.path_to_source_file = path.join(source_path, file_name)
     this.path_to_destination_file = path.join(destination_path, file_name.replace(/\.jsx$/i,""))
   }
 
+  metadata() {
+    return {
+      title: this.title,
+      relative_url: this.relative_url
+    }
+  }
+
+  class_name() { return "ReactTemplateFile" }
+
+  is_directory() { return false; }
+
   ensure_destination() {
-    const result = new FileCopyResult(this)
+    const result = new FileCopyResult("copy to webpack", this)
 
     const source_stat = fs.lstatSync(this.path_to_source_file)
 
@@ -30,6 +42,8 @@ export default class ReactTemplateFile {
     Logger.log(result.toString())
     return result
   }
+
+  is_html() { return true }
 
   _render_file() {
     delete require.cache[require.resolve(this.path_to_source_file)]

@@ -1,7 +1,8 @@
 import chalk from "chalk"
 
 export default class FileCopyResult {
-  constructor(file_to_copy) {
+  constructor(operation, file_to_copy) {
+    this.operation = operation
     this.source_path = file_to_copy.path_to_source_file
     this.destination_path = file_to_copy.path_to_destination_file
   }
@@ -30,7 +31,7 @@ export default class FileCopyResult {
   }
 
   toString() {
-    return chalk`FileToCopyResult [
+    return chalk`FileToCopyResult(${this.operation}) [
   from       : '{green ${this.source_path}}'
     modified : {yellow ${this.source_mtimeMs}}
   to         : '{green ${this.destination_path}}'
