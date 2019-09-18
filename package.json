@@ -17,6 +17,7 @@
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
     "local-web-server": "^3.0.7",
+    "markdown-it": "^10.0.0",
     "mini-css-extract-plugin": "^0.8.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
@@ -30,13 +31,10 @@
   },
   "scripts": {
     "test": "jest",
-
     "production:build": "BUILD_ENV=production yarn build",
     "production:serve": "BUILD_ENV=production yarn serve",
-
     "dev:build:watch": "find root/site | entr yarn build:webpack_input",
     "dev:webpack:watch": "webpack-dev-server --config=src/webpack.config.js --open",
-
     "serve": "node src/commands/serve.js",
     "build": "yarn build:webpack_input && yarn build:webpack_output",
     "build:webpack_input": "node src/commands/build.js",

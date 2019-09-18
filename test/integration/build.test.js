@@ -222,6 +222,51 @@ expect.extend({
   }
 })
 
+const assert_files = (source, destination, file_list) => {
+  Object.entries(file_list).forEach( (pair) => {
+    const eval_strategy = pair[1];
+    if (eval_strategy == "identical") {
+      const file_name = pair[0]
+      const source_file = path.join(source, file_name)
+      const destination_file = path.join(destination, file_name)
+
+      expect(destination_file).toHaveSameContentsAsFile(source_file)
+    }
+    else if (eval_strategy == "exists") {
+      const file_name = pair[0]
+      const source_file = path.join(source, file_name)
+      const destination_file = path.join(destination, file_name)
+
+      expect(destination_file).toExistAsFile()
+    }
+    else if (typeof eval_strategy === "string") {
+      const file_name = pair[0]
+      const check_function = pair[1]
+      const destination_file = path.join(destination, file_name)
+
+      expect(destination_file)[check_function]()
+    }
+    else if (Array.isArray(eval_strategy)) {
+      const file_name = pair[0]
+      const destination_file = path.join(destination, file_name)
+
+      expect(eval_strategy.length > 0).toBe(true)
+      eval_strategy.forEach( (check_function) => {
+        expect(destination_file)[check_function]()
+      });
+    }
+    else {
+      const dir_name = pair[0]
+      const files_in_dir = pair[1]
+
+      assert_files(path.join(source, dir_name),
+        path.join(destination,dir_name),
+        files_in_dir)
+    }
+  })
+}
+
+
 test("Building the site", () => {
   /*
    * 1. Clean up previous site
@@ -259,6 +304,7 @@ test("Building the site", () => {
    */
   const files = {
     "index.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
+    "foo.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
     "images": {
       "foo.jpg": "identical",
       "subdir": {
@@ -271,50 +317,6 @@ test("Building the site", () => {
       "bio.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
       "site.html": "toHaveWebpackInsertedContent"
     }
-  }
-
-  const assert_files = (source, destination, file_list) => {
-    Object.entries(file_list).forEach( (pair) => {
-      const eval_strategy = pair[1];
-      if (eval_strategy == "identical") {
-        const file_name = pair[0]
-        const source_file = path.join(source, file_name)
-        const destination_file = path.join(destination, file_name)
-
-        expect(destination_file).toHaveSameContentsAsFile(source_file)
-      }
-      else if (eval_strategy == "exists") {
-        const file_name = pair[0]
-        const source_file = path.join(source, file_name)
-        const destination_file = path.join(destination, file_name)
-
-        expect(destination_file).toExistAsFile()
-      }
-      else if (typeof eval_strategy === "string") {
-        const file_name = pair[0]
-        const check_function = pair[1]
-        const destination_file = path.join(destination, file_name)
-
-        expect(destination_file)[check_function]()
-      }
-      else if (Array.isArray(eval_strategy)) {
-        const file_name = pair[0]
-        const destination_file = path.join(destination, file_name)
-
-        expect(eval_strategy.length > 0).toBe(true)
-        eval_strategy.forEach( (check_function) => {
-          expect(destination_file)[check_function]()
-        });
-      }
-      else {
-        const dir_name = pair[0]
-        const files_in_dir = pair[1]
-
-        assert_files(path.join(source, dir_name),
-          path.join(destination,dir_name),
-          files_in_dir)
-      }
-    })
   }
 
   assert_files(site_input, site_output, files)
@@ -356,6 +358,7 @@ test("Building the site for prod", () => {
    */
   const files = {
     "index.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
+    "foo.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
     "images": {
       "foo.jpg": "identical",
       "subdir": {
@@ -366,52 +369,8 @@ test("Building the site for prod", () => {
     "bundle.js": "toHaveBeenMinifiedAndHashed",
     "about": {
       "bio.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
-      "site.html": "toHaveHashedWebpackInsertedContent"
+      "site.html": "toHaveHashedWebpackInsertedContent",
     }
-  }
-
-  const assert_files = (source, destination, file_list) => {
-    Object.entries(file_list).forEach( (pair) => {
-      const eval_strategy = pair[1];
-      if (eval_strategy == "identical") {
-        const file_name = pair[0]
-        const source_file = path.join(source, file_name)
-        const destination_file = path.join(destination, file_name)
-
-        expect(destination_file).toHaveSameContentsAsFile(source_file)
-      }
-      else if (eval_strategy == "exists") {
-        const file_name = pair[0]
-        const source_file = path.join(source, file_name)
-        const destination_file = path.join(destination, file_name)
-
-        expect(destination_file).toExistAsFile()
-      }
-      else if (typeof eval_strategy === "string") {
-        const file_name = pair[0]
-        const check_function = pair[1]
-        const destination_file = path.join(destination, file_name)
-
-        expect(destination_file)[check_function]()
-      }
-      else if (Array.isArray(eval_strategy)) {
-        const file_name = pair[0]
-        const destination_file = path.join(destination, file_name)
-
-        expect(eval_strategy.length > 0).toBe(true)
-        eval_strategy.forEach( (check_function) => {
-          expect(destination_file)[check_function]()
-        });
-      }
-      else {
-        const dir_name = pair[0]
-        const files_in_dir = pair[1]
-
-        assert_files(path.join(source, dir_name),
-          path.join(destination,dir_name),
-          files_in_dir)
-      }
-    })
   }
 
   assert_files(site_input, site_output, files)

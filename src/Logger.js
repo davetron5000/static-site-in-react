@@ -14,7 +14,7 @@ export default class Logger {
     let location = "unknown location"
     const stack = (new Error()).stack
     if (stack) {
-      const line = stack.split(/\n/)[2]
+      const line = stack.split(/\n/)[3]
       if (line) {
         const parts = line.split(/\//);
         location = parts[parts.length - 1];
