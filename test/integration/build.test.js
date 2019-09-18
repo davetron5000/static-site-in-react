@@ -239,6 +239,13 @@ const assert_files = (source, destination, file_list) => {
 
       expect(destination_file).toExistAsFile()
     }
+    else if (eval_strategy == "not-exists") {
+      const file_name = pair[0]
+      const source_file = path.join(source, file_name)
+      const destination_file = path.join(destination, file_name)
+
+      expect(destination_file).not.toExistAsFile()
+    }
     else if (typeof eval_strategy === "string") {
       const file_name = pair[0]
       const check_function = pair[1]
@@ -311,6 +318,7 @@ test("Building the site", () => {
         "bar.png": "identical"
       }
     },
+    "components": "not-exists",
     "styles.css": "toBeMoreThanAFewLinesLong",
     "bundle.js": "toBeMoreThanAFewLinesLong",
     "about": {
@@ -365,6 +373,7 @@ test("Building the site for prod", () => {
         "bar.png": "identical"
       }
     },
+    "components": "not-exists",
     "styles.css": "toHaveBeenMinifiedAndHashed",
     "bundle.js": "toHaveBeenMinifiedAndHashed",
     "about": {
