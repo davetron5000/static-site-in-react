@@ -23,22 +23,10 @@ export default class ReactTemplateFile {
     result.source_modified_at(source_stat.mtimeMs)
 
     result.source_is_file(true)
-    if (fs.existsSync(this.path_to_destination_file)) {
-      const dest_stat = fs.lstatSync(this.path_to_destination_file)
-      result.destination_modified_at(dest_stat.mtimeMs)
+    result.set_action("rendered file", "always render since we don't know if React components changed yet")
 
-      if (dest_stat.mtimeMs >= source_stat.mtimeMs) {
-        result.set_action("none", "destination fresher than source")
-      }
-      else {
-        result.set_action("copied file", "destination is stale")
-        this._render_file()
-      }
-    }
-    else {
-      result.set_action("copied file", "destination doesn't exist")
-      this._render_file()
-    }
+    this._render_file()
+
     log(result.toString())
     return result
   }
