@@ -4,8 +4,8 @@ require("@babel/register")({
 });
 
 const process = require("process")
-const Main    = require("./Main").default
-const Runner  = require("./Runner").default
+const Main    = require("../Main").default
+const Runner  = require("../Runner").default
 
 const runner = new Runner(process.env, new Main())
 

@@ -4,8 +4,8 @@ require("@babel/register")({
 });
 
 const process = require("process")
-const Config = require("./Config").default
-const Logger = require("./Logger").default
+const Config = require("../Config").default
+const Logger = require("../Logger").default
 
 const config = Config.load(process.env)
 

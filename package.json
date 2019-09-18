@@ -37,9 +37,9 @@
     "dev:build:watch": "find root/site | entr yarn build:webpack_input",
     "dev:webpack:watch": "webpack-dev-server --config=src/webpack.config.js --open",
 
-    "serve": "node src/serve.js",
+    "serve": "node src/commands/serve.js",
     "build": "yarn build:webpack_input && yarn build:webpack_output",
-    "build:webpack_input": "node src/build.js",
+    "build:webpack_input": "node src/commands/build.js",
     "build:webpack_output": "NODE_DISABLE_COLORS=1 webpack --config=src/webpack.config.js  --verbose --display-error-details --no-color"
   }
 }
