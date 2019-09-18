@@ -9,8 +9,8 @@ const HtmlPlugin           = require("html-webpack-plugin");
 const fs                   = require("fs");
 const path                 = require("path");
 const process              = require("process")
-const { load_config }      = require("./config_file")
-const { log }              = require ("./log")
+const Config               = require("./Config").default
+const Logger               = require("./Logger").default
 
 const get_html_plugins_for_pages = (plugin_config, dir, subdir) => {
   const files = fs.readdirSync(dir);
@@ -24,16 +24,16 @@ const get_html_plugins_for_pages = (plugin_config, dir, subdir) => {
 
     if (fileIsDirectory) {
       const newSubdir = path.join(subdir, path.basename(pathToFile));
-      log(`${pathToFile} is a directory; recursing to ${newSubdir}`);
+      Logger.log(`${pathToFile} is a directory; recursing to ${newSubdir}`);
       return get_html_plugins_for_pages(plugin_config,pathToFile,newSubdir);
     }
     else {
       if (path.extname(file) === ".html") {
-        log(`${pathToFile} is an html file, creating a plugin`)
+        Logger.log(`${pathToFile} is an html file, creating a plugin`)
         const template = pathToFile;
         const destinationFile = path.join(subdir, file);
 
-        log(`Making plugin: ${template} into ${destinationFile}`)
+        Logger.log(`Making plugin: ${template} into ${destinationFile}`)
 
         return new HtmlPlugin(
           Object.assign(
@@ -46,7 +46,7 @@ const get_html_plugins_for_pages = (plugin_config, dir, subdir) => {
         );
       }
       else {
-        log(`Ignoring ${pathToFile}, since it's not an HTML file`)
+        Logger.log(`Ignoring ${pathToFile}, since it's not an HTML file`)
       }
     }
   }).flat(1).filter( (element) => {
@@ -98,7 +98,7 @@ const default_html_plugin_options = (config) => {
 }
 
 module.exports = function(_) {
-  const config = load_config(process.env)
+  const config = Config.load(process.env)
 
   let plugins = []
   const html_plugins = get_html_plugins_for_pages(default_html_plugin_options(config), config.webpack_input_path)

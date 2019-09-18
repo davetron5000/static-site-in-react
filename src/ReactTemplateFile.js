@@ -1,10 +1,10 @@
-import fs                            from "fs"
-import path                          from "path"
-import chalk                         from "chalk"
-import React                         from "react";
-import ReactDOMServer                from "react-dom/server";
-import { log, log_and_return_value } from "./log"
-import FileCopyResult                from "./FileCopyResult"
+import fs             from "fs"
+import path           from "path"
+import chalk          from "chalk"
+import React          from "react";
+import ReactDOMServer from "react-dom/server";
+import Logger         from "./Logger"
+import FileCopyResult from "./FileCopyResult"
 
 export default class ReactTemplateFile {
   constructor(file_name, source_path, destination_path) {
@@ -27,7 +27,7 @@ export default class ReactTemplateFile {
 
     this._render_file()
 
-    log(result.toString())
+    Logger.log(result.toString())
     return result
   }
 

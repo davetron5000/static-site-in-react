@@ -1,7 +1,7 @@
 import fs from "fs"
 import path from "path"
 import chalk from "chalk"
-import { log, log_and_return_value } from "./log"
+import Logger from "./Logger"
 import ReactTemplateFile from "./ReactTemplateFile"
 import FileCopyResult from "./FileCopyResult"
 
@@ -56,7 +56,7 @@ export default class FileToCopy {
         fs.copyFileSync(this.path_to_source_file, this.path_to_destination_file)
       }
     }
-    log(result.toString())
+    Logger.log(result.toString())
     return result
   }
 }

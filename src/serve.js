@@ -4,12 +4,13 @@ require("@babel/register")({
 });
 
 const process = require("process")
-const { load_config } = require("./config_file")
-const { log } = require("./log")
-const config = load_config(process.env)
+const Config = require("./Config").default
+const Logger = require("./Logger").default
+
+const config = Config.load(process.env)
 
 const LocalWebServer = require("local-web-server")
-log("Now serving http://localhost:9000")
+Logger.log("Now serving http://localhost:9000")
 const ws = LocalWebServer.create({
   port: 9000,
   stack: require("local-web-server/lib/default-stack"),

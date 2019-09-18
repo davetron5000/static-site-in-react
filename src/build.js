@@ -3,27 +3,10 @@ require("@babel/register")({
   plugins: ["transform-es2015-modules-commonjs"]
 });
 
-const process            = require("process")
-const { log, log_error } = require("./log")
-const main               = require("./main").default
+const process = require("process")
+const Main    = require("./main").default
+const Runner  = require("./Runner").default
 
-let runner = (main) => {
-  try {
-    log("Trapping exceptions.  Set DEBUG=true to allow them to leak through")
-    main()
-  }
-  catch (error) {
-    log_error(error.message)
-    process.exit(1)
-  }
-}
+const runner = new Runner(process.env, new Main())
 
-if ( (process.env.BUILD_ENV == "test") ||
-     (process.env.DEBUG == "true") ) {
-  log("Will not trap exceptions")
-  runner = (main) => {
-    main()
-  }
-}
-
-runner(main)
+process.exit(runner.run())
