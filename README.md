@@ -13,7 +13,7 @@ Goal - use React as a templating framework to produce a static set of HTML pages
 ## Day to day
 
 This compiles `root/site` into a directory for Webpack, which then builds the site that gets deployed.  Yes, I'm
-sure this could be done with a tangled web of duct tape-lade Webpack loaders.
+sure this could be done with a tangled web of duct tape-laden Webpack loaders.
 
 Anyway, open two terminals run:
 
@@ -44,4 +44,16 @@ JS to accomodate long-term caching on a CDN.
 Note that anytime you build, the results will be in `root/deploy_to_«env»`, where `«env»` is `dev` by default, or
 whatever value was in `BUILD_ENV`.
 
+## But I want to insert JavaScript between basic functions already provided by the browser!
 
+You can!  Inside `root/site/js` is `index.js`, which is your Webpack entry point.  You can do whatever you want in
+here, including replace the browser with your own JavaScript!
+
+In reality, if you do want some sort of PWA/SPA/WhateverPA, you should use Next.Js or Gatsby. *This* is for making
+a site where the basics of navigating and page rendering and handled by a browser connecting to a CDN whenever an
+`<a href` is clicked.
+
+But, you can still add JavaScript here as you normally would in Webpack and it'll get compiled.  That's how the
+CSS stuff is already working.
+
+And, since this "library" is just inlined code, you can change whatever you want.  Have fun!
