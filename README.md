@@ -121,3 +121,8 @@ But, you can still add JavaScript here as you normally would in Webpack and it'l
 CSS stuff is already working.
 
 And, since this "library" is just inlined code, you can change whatever you want.  Have fun!
+
+## But I want to make markdown files that don't have the same URL is the HTML file in prod just like Jekyll
+
+Sorry, you can't.  Just create files in whatever structure you wanted, named whatever you want, and that will be
+the URL.  No transalating `2016-03-04` to `2016/03/04`.
