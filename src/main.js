@@ -19,7 +19,7 @@ export default class Main {
 
   _create_derived_site_data(from_dir, to_dir) {
 
-    const derived_data = { pages: [] }
+    let derived_data = { pages: [] }
 
     this._recurse_all_files(from_dir, to_dir, (file_to_copy) => {
       Logger.log(`_recurse_all_files(${from_dir}, ${to_dir}, ())`)
@@ -38,7 +38,19 @@ export default class Main {
       Logger.log(result.toString());
       return result;
     });
-    Logger.log(derived_data)
+    Logger.log(`Derived site data:\n${JSON.stringify(derived_data,null,'  ')}`)
+
+    let user_supplied_site_data = {};
+    if (fs.existsSync("site_data.json")) {
+      user_supplied_site_data = JSON.parse(fs.readFileSync("site_data.json"))
+      Logger.log(`site_data.json not found and parsed as:\n${JSON.stringify(user_supplied_site_data,null,'  ')}`)
+    }
+    else {
+      Logger.log("site_data.json not found - No user-supplied data")
+    }
+
+    derived_data = Object.assign(derived_data, user_supplied_site_data)
+    Logger.log(`Derived and merged site data:\n${JSON.stringify(derived_data,null,'  ')}`)
 
     const contents = `
 // This is derived - do not edit

@@ -98,26 +98,44 @@ expect.extend({
     if (fs.existsSync(file_name)) {
       const file_contents = fs.readFileSync(file_name)
       const expected_file_links = [
-        [ "/index.html", "Index" ],
-        [ "/foo.html", "My Awesome Page" ],
-        [ "/about/bio.html", "About Bio" ],
-        [ "/about/site.html", "About Site" ],
+        [ "/index.html", "Index", true ],
+        [ "/foo.html", "My Awesome Page", true ],
+        [ "/bar.html", "My Other Awesome Page", false ],
+        [ "/about/bio.html", "About Bio", true ],
+        [ "/about/site.html", "About Site", true ],
       ];
 
       for (let file_link of expected_file_links) {
         const url = file_link[0],
-              title = file_link[1]
+          title = file_link[1],
+          should_be_found = file_link[2]
 
-        if (file_contents.indexOf(url) == -1) {
-          return {
-            message: () => `Expected ${file_name} to contain a link to ${url}. Contents:\n\n${file_contents}`,
-            pass: false
+        if (should_be_found) {
+          if (file_contents.indexOf(url) == -1) {
+            return {
+              message: () => `Expected ${file_name} to contain a link to ${url}. Contents:\n\n${file_contents}`,
+              pass: false
+            }
+          }
+          if (file_contents.indexOf(title) == -1) {
+            return {
+              message: () => `Expected ${file_name} to contain a with title ${title}. Contents:\n\n${file_contents}`,
+              pass: false
+            }
           }
         }
-        if (file_contents.indexOf(title) == -1) {
-          return {
-            message: () => `Expected ${file_name} to contain a with title ${title}. Contents:\n\n${file_contents}`,
-            pass: false
+        else {
+          if (file_contents.indexOf(url) != -1) {
+            return {
+              message: () => `Expected ${file_name} NOT to contain a link to ${url}. Contents:\n\n${file_contents}`,
+              pass: false
+            }
+          }
+          if (file_contents.indexOf(title) != -1) {
+            return {
+              message: () => `Expected ${file_name} NOT to contain a with title ${title}. Contents:\n\n${file_contents}`,
+              pass: false
+            }
           }
         }
       }
@@ -354,6 +372,7 @@ test("Building the site", () => {
   const files = {
     "index.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact", "toHaveLinksToOtherFiles" ],
     "foo.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
+    "bar.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
     "images": {
       "foo.jpg": "identical",
       "subdir": {
@@ -362,7 +381,8 @@ test("Building the site", () => {
     },
     "components": "not-exists",
     "data.json": "not-exists",
-    "derived_site_data.json": "not-exists",
+    "derived_site_data.js": "not-exists",
+    "site_data.json": "not-exists",
     "styles.css": "toBeMoreThanAFewLinesLong",
     "bundle.js": "toBeMoreThanAFewLinesLong",
     "about": {
@@ -372,6 +392,10 @@ test("Building the site", () => {
   }
 
   assert_files(site_input, site_output, files)
+
+  const foo_html_contents = fs.readFileSync(path.join(site_output,"foo.html")).toString()
+  expect(foo_html_contents).toMatch(/My Awesome Page/)
+  expect(foo_html_contents).toMatch(/This is some data/)
 })
 test("Building the site for prod", () => {
   /*
@@ -411,6 +435,7 @@ test("Building the site for prod", () => {
   const files = {
     "index.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact", "toHaveLinksToOtherFiles" ],
     "foo.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
+    "bar.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
     "images": {
       "foo.jpg": "identical",
       "subdir": {
@@ -419,7 +444,8 @@ test("Building the site for prod", () => {
     },
     "components": "not-exists",
     "data.json": "not-exists",
-    "derived_site_data.json": "not-exists",
+    "derived_site_data.js": "not-exists",
+    "site_data.json": "not-exists",
     "styles.css": "toHaveBeenMinifiedAndHashed",
     "bundle.js": "toHaveBeenMinifiedAndHashed",
     "about": {
@@ -429,4 +455,8 @@ test("Building the site for prod", () => {
   }
 
   assert_files(site_input, site_output, files)
+
+  const foo_html_contents = fs.readFileSync(path.join(site_output,"foo.html")).toString()
+  expect(foo_html_contents).toMatch(/My Awesome Page/)
+  expect(foo_html_contents).toMatch(/This is some data/)
 })

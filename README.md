@@ -38,6 +38,65 @@ configuration will have Webpack:
 * compile JS and CSS
 * insert refs to your JS bundle and CSS stylesheet into all HTML files
 
+## Markdown Files
+
+If your markdown file is just markdown, it'll be converted into an HTML file pretty much raw.  This may not be
+what you want.  Probably, you have some sort of layout components into which you'd like to insert the rendered
+HTML.
+
+To do that, prepred your markdown witih _front-matter_, which is a blob of JSON that starts and ends with `---`
+like so:
+
+```
+---
+{
+  "component": "Layout",
+  "title": "My Page",
+  "key": "some value"
+}
+---
+# ${page.title}
+## This is my page, oh yeah!
+
+And this is some content: ${page.key}
+```
+
+The JSON between the `---` lines will be parsed.  If there is a `component` key, then your HTML will be inserted
+into a React component by that name like so:
+
+```
+render() {
+  html = «rendered HTML»
+  return (
+    <Layout>
+      <div dangerouslySetInnerHTML={ { __html: html } } />
+    </Layout>
+  )
+}
+```
+
+Since that HTML could have JavaScript interpolation in it, there is also a variable called `page` that has the
+entire contents of the front-matter as its value.  Thus, when we wrote `# ${page.title}`, what results is `<h1>
+${page.title}</h1>`, which then renders as `<h1>My Page</h1>`.
+
+## Site-wide Data
+
+It's often handy to have metadata about yuor site's pages, e.g. to auto-generate blog index pages and such.
+
+Thus, there is a `.js` file created called `derived_site_data.js` in the root of your site that you can `import`:
+
+```javascript
+const SiteData = import "./derived_site_data.js"
+```
+
+This will be a JSON object with various keys set for you by the system:
+
+* `pages` - an array of objects, one for each HTML page.  It will have the relative url and the title.
+
+It will also have merged into it, any information in `site_data.json` at the root of your site.
+
+## Configuration
+
 There is very little configuration, but what configuration exists is in `site-config.dev.json`, which is used by
 default when you execute the commands above.  If you set `BUILD_ENV` to something, then `site-config.«whatever
 BUILD_ENV was».json` is used instead.  The most common use of this is for production builds.

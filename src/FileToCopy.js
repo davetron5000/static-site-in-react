@@ -20,6 +20,10 @@ export default class FileToCopy {
       return new NoOpFileCopy(file_name, source_path, destination_path, 
         `${file_name} appears to be a tmp file`);
     }
+    if ( (file_name === "derived_site_data.js") || (file_name === "site_data.json")) {
+      return new NoOpFileCopy(file_name, source_path, destination_path,
+        `${file_name} is site metadata used for builds only`)
+    }
     return new RegularFile(file_name, source_path, destination_path)
   }
 }

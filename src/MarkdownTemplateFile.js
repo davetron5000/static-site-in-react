@@ -53,9 +53,8 @@ export default class MarkdownTemplateFile extends RegularFile {
     let metadata = super.metadata()
     const [ front_matter, _ ] = this._parse_file()
 
-    if (front_matter.title) {
-      metadata.title = front_matter.title
-    }
+    metadata = Object.assign(metadata, front_matter)
+
     return metadata
   }
 
@@ -74,6 +73,7 @@ export default class MarkdownTemplateFile extends RegularFile {
         `import React from "react";
 import ${component_name} from "./components/${component_name}";
 
+const page = JSON.parse('${JSON.stringify(front_matter)}')
 const html = \`${html}\`
 
 export default function(props) {
