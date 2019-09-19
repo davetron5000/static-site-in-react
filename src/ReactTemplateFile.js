@@ -16,13 +16,6 @@ export default class ReactTemplateFile extends RegularFile {
     this.path_to_destination_file = path.join(destination_path, file_name.replace(/\.jsx$/i,""))
   }
 
-  metadata() {
-    return {
-      title: this.title,
-      relative_url: this.relative_url
-    }
-  }
-
   class_name() { return "ReactTemplateFile" }
 
   is_directory() { return false; }

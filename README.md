@@ -24,11 +24,16 @@ This should give you a relatively fast hot reload cycle.
 
 # How it works
 
-`root/site` is the root of the source files for the website.  Any file that is *does not*  end in `.html.jsx` will
-be copied over directly.  Any `.html.jsx` files are assumed to be React components and will be rendered statically
-into `.html` files. They are rendered verbatim, *except* that `<!DOCTYPE html>` is put at the top.
+`root/site` is the root of the source files for the website. All files are copied verbatim to Webpack's input,
+  except for these types:
 
-All of this is then fed to Webpack which will:
+* File ends in `.html.jsx` - it is assumed to be a React component and will be rendered into a `.html` file of the
+same name.  `<!DOCTYPE html>` will be placed at the top of the file.
+* File ends in `.html.md` - it is assumed to be in Markdown and processed into an `.html` file of the same name.
+This file can have so-called “front-matter” to control how the HTML is produced.  See below.
+
+The output all this copying and transforming is  to ask Webpack to compile the site for deployment.  The
+configuration will have Webpack:
 
 * compile JS and CSS
 * insert refs to your JS bundle and CSS stylesheet into all HTML files

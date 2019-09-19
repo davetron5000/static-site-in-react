@@ -50,12 +50,13 @@ export default class MarkdownTemplateFile extends RegularFile {
   class_name() { return "MarkdownTemplateFile" }
 
   metadata() {
+    let metadata = super.metadata()
     const [ front_matter, _ ] = this._parse_file()
 
-    return {
-      relative_url: this.relative_url,
-      title: front_matter.title
+    if (front_matter.title) {
+      metadata.title = front_matter.title
     }
+    return metadata
   }
 
   _render_file() {
