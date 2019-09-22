@@ -78,7 +78,7 @@ const html = \`${html}\`
 
 export default function(props) {
   return(
-    <${component_name}>
+    <${component_name} page={page}>
       <div dangerouslySetInnerHTML={ {__html: html } } />
     </${component_name}>
   );
