@@ -98,17 +98,18 @@ expect.extend({
     if (fs.existsSync(file_name)) {
       const file_contents = fs.readFileSync(file_name)
       const expected_file_links = [
-        [ "/index.html", "Index", true ],
-        [ "/foo.html", "My Awesome Page", true ],
-        [ "/bar.html", "My Other Awesome Page", false ],
-        [ "/about/bio.html", "About Bio", true ],
-        [ "/about/site.html", "About Site", true ],
+        [ "/index.html", "Index", null, true ],
+        [ "/foo.html", "My Awesome Page", "your friendly neighborhood excerpt", true ],
+        [ "/bar.html", "My Other Awesome Page", null, false ],
+        [ "/about/bio.html", "About Bio", null, true ],
+        [ "/about/site.html", "About Site", null, true ],
       ];
 
       for (let file_link of expected_file_links) {
         const url = file_link[0],
           title = file_link[1],
-          should_be_found = file_link[2]
+          excerpt = file_link[2],
+          should_be_found = file_link[3]
 
         if (should_be_found) {
           if (file_contents.indexOf(url) == -1) {
@@ -120,6 +121,12 @@ expect.extend({
           if (file_contents.indexOf(title) == -1) {
             return {
               message: () => `Expected ${file_name} to contain a with title ${title}. Contents:\n\n${file_contents}`,
+              pass: false
+            }
+          }
+          if (excerpt && file_contents.indexOf(excerpt) == -1) {
+            return {
+              message: () => `Expected ${file_name} to contain a the excerpt '${excerpt}'. Contents:\n\n${file_contents}`,
               pass: false
             }
           }

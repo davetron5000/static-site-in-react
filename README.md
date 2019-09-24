@@ -91,7 +91,12 @@ const SiteData = import "./derived_site_data.js"
 
 This will be a JSON object with various keys set for you by the system:
 
-* `pages` - an array of objects, one for each HTML page.  It will have the relative url and the title.
+* `pages` - an array of objects, one for each HTML page. These will have:
+  - `relative_url` - relative url to the final page, suitable fo rlinking
+  - `title` - if `title` was in the front-matter, it will be here, other wise it will be the humanized path to the
+  file, a file with the url `/this/file/here.html` will have a title of “This File Here”.
+  - All other front-matter if the file was a markdown file
+  - `exceprt` - if the file was a markdown file, this is the first paragraph (`<p>` tag) of the content.
 
 It will also have merged into it, any information in `site_data.json` at the root of your site.
 

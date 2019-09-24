@@ -7,7 +7,12 @@ export default function(props) {
     return !page.blog_post
   }).map( (page) => {
     return (
-      <li key={page.relative_url} ><a href={ page.relative_url }>{ page.title }</a></li>
+      <li key={page.relative_url} >
+        <a href={ page.relative_url }>{ page.title }</a>
+        <p>
+          { page.excerpt }
+        </p>
+      </li>
     );
   });
   return(

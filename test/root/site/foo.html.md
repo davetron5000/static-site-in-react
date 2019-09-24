@@ -8,7 +8,8 @@
 ---
 # ${page.title}
 
-OF **MARKDOWN**!!!
+Oh hi everyone.
+I'm your friendly neighborhood excerpt.
 
 * It has bullets
 * and bullets

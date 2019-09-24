@@ -4,6 +4,7 @@ import chalk          from "chalk"
 import MarkdownIt     from "markdown-it"
 import React          from "react";
 import ReactDOMServer from "react-dom/server";
+import { parse }      from "node-html-parser";
 
 import Logger         from "./Logger"
 import FileCopyResult from "./FileCopyResult"
@@ -51,7 +52,12 @@ export default class MarkdownTemplateFile extends RegularFile {
 
   metadata() {
     let metadata = super.metadata()
-    const [ front_matter, _ ] = this._parse_file()
+    const [ front_matter, markdown_lines ] = this._parse_file()
+    const html = md.render(markdown_lines.join("\n")).replace(/\`/,"\\`")
+
+    const parsed = parse(html)
+    Logger.log(parsed.querySelector("p").toString())
+    front_matter.excerpt = parsed.querySelector("p").toString()
 
     metadata = Object.assign(metadata, front_matter)
 
