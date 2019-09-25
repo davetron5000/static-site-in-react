@@ -35,7 +35,12 @@ export default class RegularFile {
   }
 
   is_directory() {
-    return fs.lstatSync(this.path_to_source_file).isDirectory()
+    if (fs.existsSync(this.path_to_source_file)) {
+      return fs.lstatSync(this.path_to_source_file).isDirectory()
+    }
+    else {
+      return false
+    }
   }
 
   class_name() { return "RegularFile" }

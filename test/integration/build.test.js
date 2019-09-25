@@ -394,7 +394,8 @@ test("Building the site", () => {
     "bundle.js": "toBeMoreThanAFewLinesLong",
     "about": {
       "bio.html": [ "toHaveWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
-      "site.html": "toHaveWebpackInsertedContent"
+      "site.html": "toHaveWebpackInsertedContent",
+      "colophon.html": "toHaveWebpackInsertedContent"
     }
   }
 
@@ -458,6 +459,7 @@ test("Building the site for prod", () => {
     "about": {
       "bio.html": [ "toHaveHashedWebpackInsertedContent", "toHaveBeenRenderedByReact" ],
       "site.html": "toHaveHashedWebpackInsertedContent",
+      "colophon.html": "toHaveHashedWebpackInsertedContent"
     }
   }
 

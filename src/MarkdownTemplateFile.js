@@ -74,10 +74,12 @@ export default class MarkdownTemplateFile extends RegularFile {
 
       Logger.log(`Writing JSX files to ${html_jsx_file}`)
 
+      const path_to_components = this._derive_path_to_react_components()
+
       fs.writeFileSync(
         html_jsx_file,
         `import React from "react";
-import ${component_name} from "./components/${component_name}";
+import ${component_name} from "${path_to_components}/components/${component_name}";
 
 const page = JSON.parse('${JSON.stringify(front_matter)}')
 const html = \`${html}\`
@@ -132,6 +134,22 @@ export default function(props) {
       markdown_lines = file_lines
     }
     return [ front_matter, markdown_lines ]
+  }
+
+
+  _derive_path_to_react_components() {
+    const relative_url_parts = this.relative_url.split(/\//);
+    const relative_url_paths = relative_url_parts.slice(2);
+
+    let path_to_components = relative_url_paths.map( (part) => {
+      return ".."
+    }).join("/")
+
+    if (path_to_components === "") {
+      path_to_components = "."
+    }
+    Logger.log(`path_to_components is ${path_to_components}`)
+    return path_to_components
   }
 }
 
