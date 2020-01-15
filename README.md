@@ -7,15 +7,14 @@ Goal - use React as a templating framework to produce a static set of HTML pages
 1. Clone this repo
 1. `yarn install`
 1. `yarn test` (make sure everything's working)
-1. Create files in `root/site` (see below)
-1. `yarn build`
+1. `yarn dev`
 
-## Day to day
+This will open up the boilerplate site in your browser.  It should indicate where things are and what you need to
+change.
 
-This compiles `root/site` into a directory for Webpack, which then builds the site that gets deployed.  Yes, I'm
-sure this could be done with a tangled web of duct tape-laden Webpack loaders.
-
-`yarn dev` will start it all up and open your browser in HAWT RELODE MODE
+In particular, you should open up `site_data.json` and fill in what's there.  You can add more to this if you
+like, and it will be available to your pages when they build.  See below for more data that gets derived for
+your.
 
 # How it works
 
@@ -107,6 +106,11 @@ JS to accomodate long-term caching on a CDN.
 
 Note that anytime you build, the results will be in `root/deploy_to_«env»`, where `«env»` is `dev` by default, or
 whatever value was in `BUILD_ENV`.
+
+## Helpful links
+
+* https://realfavicongenerator.net - create all the favoicon nonsense
+* https://diybookcovers.com/3Dmockups/# - make fancy book icons
 
 ## But I want to insert JavaScript between basic functions already provided by the browser!
 
