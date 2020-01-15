@@ -15,12 +15,7 @@ Goal - use React as a templating framework to produce a static set of HTML pages
 This compiles `root/site` into a directory for Webpack, which then builds the site that gets deployed.  Yes, I'm
 sure this could be done with a tangled web of duct tape-laden Webpack loaders.
 
-Anyway, open two terminals run:
-
-* `yarn dev:build:watch`
-* `yarn dev:webpack:watch`
-
-This should give you a relatively fast hot reload cycle.
+`yarn dev` will start it all up and open your browser in HAWT RELODE MODE
 
 # How it works
 
