@@ -34,22 +34,22 @@ export default class Layout extends React.Component {
   <body className="ma0 pa0">
     <header className="tc">
       <h1>Welcome to your New Site</h1>
-      <p>The header and footer can be edited in <code>root/site/components/Layout.jsx</code>
+      <p>The header and footer can be edited in <code>root/site/components/Layout.jsx</code></p>
     </header>
     <a name="main" className="">&nbsp;</a>
     <p>
       Everything between this line and the one before the footer can be edited in the <code>.html.jsx</code> file corresponding to whatever link you are looking at (e.g. <code>root/site/index.html.jsx</code> if you are looking at the home page).
     </p>
-    <hr>
+    <hr />
     { this.props.children }
-    <hr>
+    <hr />
     <p>
       Everything above this line is in the <code>.html.jsx</code> file.  This and the rest of the page are in <code>Layout.jsx</code>.
     </p>
     <footer className="tc bg-black white pb4 pa2">
       <a name="about"></a>
       <p className="lh-copy">
-        Copyright &copy; { copyright.string } by David Bryant Copeland, All Rights Reserved.
+        Copyright &copy; { copyright.string } by { author }, All Rights Reserved.
       </p>
     </footer>
   </body>

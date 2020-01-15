@@ -8,3 +8,5 @@ test/root/deploy_to_dev
 test/root/webpack_input_dev
 test/root/deploy_to_production
 test/root/webpack_input_production
+root/webpack_input_dev
+root/deployt_to_dev
